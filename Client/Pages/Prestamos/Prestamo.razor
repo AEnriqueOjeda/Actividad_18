@@ -1,0 +1,79 @@
+﻿@page "/Prestamos"
+@using Actividad_18.Shared.Models;
+@inject NavigationManager a
+@inject HttpClient http
+
+<h2>Lista de prestamos</h2>
+
+
+@if (elprestramo == null)
+{
+    <h4>Cargando...</h4>
+}else if (elprestramo.Count == 0)
+{
+    <h2>No hay prestamos</h2>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Codigo</th>
+                <th>Fecha del Prestamo</th>
+                <th>Fecha de Devolucion</th>
+                <th>Id del Usuario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var u in elprestramo)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.codigo</td>
+                    <td>@u.FechaPrestamo</td>
+                    <td>@u.FechaDevolucion</td>
+                    <td>@u.UsuariosId</td>
+                    <td>
+                        <div>
+                            <button class="btn btn-warning" @onclick="(()=>Edit(Convert.ToInt32(u.Id)))">
+                                <span class="oi oi-pencil"></span>
+                            </button>
+                            <button class="btn btn-danger" @onclick="(()=>delet(u))">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<button class="btn btn-success" @onclick=nuevoprestamo><span>Nuevo Préstamo</span></button>
+
+
+
+@code {
+    private List<Prestamos> elprestramo = new List<Prestamos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        elprestramo = await http.GetFromJsonAsync<List<Prestamos>>("api/Prestamos");
+    }
+
+    public void nuevoprestamo()
+    {
+        a.NavigateTo("/Prestamo/Nuevo");
+    }
+    private void Edit(int i)
+    {
+        a.NavigateTo($"/Prestamo/Edit/{i}");
+    }
+    public async Task delet(Prestamos user)
+    {
+        await http.DeleteAsync($"api/Pretamos/{user.Id}");
+        elprestramo.Remove(user);
+    }
+}

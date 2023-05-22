@@ -1,0 +1,58 @@
+﻿@page "/Libro/Edit/{id:int}"
+@inject HttpClient http
+@inject NavigationManager a
+@using Actividad_18.Shared.Models
+
+<h3>Editar Prestamo</h3>
+<EditForm Model="loslibros" OnValidSubmit="edit">
+    <DataAnnotationsValidator />
+
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtNombre" class="form-label">Nombre: </label>
+        <InputText id="txtNombre" class="form-control" @bind-Value="loslibros.nombre" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txteditorial" class="form-label">Editorial: </label>
+        <InputText id="txteditorial" class="form-control" @bind-Value="loslibros.editorial" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtautor" class="form-label">Autor: </label>
+        <InputText id="txtautor" class="form-control" @bind-Value="loslibros.autro" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtISBN" class="form-label">ISBN: </label>
+        <InputText id="txtISBN" class="form-control" @bind-Value="loslibros.ISBN" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="numEjemplares" class="form-label">Ejemplares: </label>
+        <InputNumber id="numEjemplares" class="form-control" @bind-Value="loslibros.ejemplares" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="numCodigo" class="form-label">Codigo: </label>
+        <InputNumber id="numCodigo" class="form-control" @bind-Value="loslibros.codigo" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="numId" class="form-label">Id Prestamo: </label>
+        <InputNumber id="numId" class="form-control" @bind-Value="loslibros.PrestamosId" />
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+</EditForm>
+
+
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private Libros loslibros = new Libros();
+
+    protected override async Task OnInitializedAsync()
+    {
+        loslibros = await http.GetFromJsonAsync<Libros>($"api/Libros/{id}");
+    }
+
+    private async void edit()
+    {
+        await http.PutAsJsonAsync($"api/Libros/{id}", loslibros);
+        a.NavigateTo("/Libros");
+    }
+}

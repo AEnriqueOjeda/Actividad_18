@@ -1,0 +1,40 @@
+﻿@page "/Prestamo/Nuevo"
+@inject HttpClient http
+@inject NavigationManager a
+@using Actividad_18.Shared.Models
+
+
+<h3>Nuevo Prestamo</h3>
+
+<EditForm Model="elprestamo" OnValidSubmit="nuevo">
+    <DataAnnotationsValidator />
+
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtCodigo" class="form-label">Codigo: </label>
+        <InputText id="txtCodigo" class="form-control" @bind-Value="elprestamo.codigo" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtApellido" class="form-label">Fecha Prestamo: </label>
+        <InputDate id="txtApellido" class="form-control" @bind-Value="elprestamo.FechaPrestamo" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtTelefono" class="form-label">Fecha devolucion: </label>
+        <InputDate id="txtTelefono" class="form-control" @bind-Value="elprestamo.FechaDevolucion" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtCorreo" class="form-label">Id Usuario: </label>
+        <InputNumber id="txtCorreo" class="form-control" @bind-Value="elprestamo.UsuariosId" />
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+</EditForm>
+
+
+
+@code {
+    private Prestamos elprestamo = new Prestamos();
+    private async void nuevo()
+    {
+        await http.PostAsJsonAsync("api/Prestamos", elprestamo);
+        a.NavigateTo("/Prestamos");
+    }
+}

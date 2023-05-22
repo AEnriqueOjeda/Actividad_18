@@ -1,0 +1,85 @@
+﻿@page "/Libros"
+@using Actividad_18.Shared.Models;
+@inject NavigationManager a
+@inject HttpClient http
+
+<h2>Lista de Libros</h2>
+
+
+@if (loslibros == null)
+{
+    <h4>Cargando...</h4>
+}else if (loslibros.Count == 0)
+{
+    <h2>No existen libros</h2>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Editorial</th>
+                <th>Autor</th>
+                <th>ISBN</th>
+                <th>Ejemplares</th>
+                <th>Codigo</th>
+                <th>PrestamosId</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var u in loslibros)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.nombre</td>
+                    <td>@u.editorial</td>
+                    <td>@u.autro</td>
+                    <td>@u.ISBN</td>
+                    <td>@u.ejemplares</td>
+                    <td>@u.codigo</td>
+                    <td>@u.PrestamosId</td>
+                    <td>
+                        <div>
+                            <button class="btn btn-warning" @onclick="(()=>Edit(Convert.ToInt32(u.Id)))">
+                                <span class="oi oi-pencil"></span>
+                            </button>
+                            <button class="btn btn-danger" @onclick="(()=>delet(u))">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<button class="btn btn-success" @onclick=nuevoprestamo><span>Nuevo Libro</span></button>
+
+
+
+@code {
+    private List<Libros> loslibros = new List<Libros>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        loslibros = await http.GetFromJsonAsync<List<Libros>>("api/Libros");
+    }
+
+    public void nuevoprestamo()
+    {
+        a.NavigateTo("/Libro/Nuevo");
+    }
+    private void Edit(int i)
+    {
+        a.NavigateTo($"/Libro/Edit/{i}");
+    }
+    public async Task delet(Libros book)
+    {
+        await http.DeleteAsync($"api/Libros/{book.Id}");
+        loslibros.Remove(book);
+    }
+}
